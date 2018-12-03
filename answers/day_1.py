@@ -4,6 +4,7 @@ import click
 @click.command()
 @click.argument('puzzle_input', type=click.Path(exists=True))
 def main(puzzle_input):
+
     with open(puzzle_input, 'r') as f:
         file = f.read()
 
