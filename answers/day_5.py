@@ -3,32 +3,20 @@ import string
 
 
 def reduce_str(puzzle):
-    output = ''
+    output = puzzle
     i = 0
-    while i < len(puzzle):
-        entry = puzzle[i]
-        if (i == len(puzzle)-1 or entry == puzzle[i+1] or
-           entry.lower() != puzzle[i+1].lower()):
-            output += entry
+    while True:
+        entry = output[i]
+        if i == len(output)-1:
+            # we are done
+            break
+        elif entry == output[i+1] or entry.lower() != output[i+1].lower():
             i += 1
         else:
-            i += 2
+            # delete entry and entry+1
+            output = output[:i] + output[i+2:]
+            i += -1
     return output
-
-
-def fully_reduce_str(puzzle):
-    further_reduce = True
-
-    out = puzzle
-    old_length = len(out)
-
-    while further_reduce:
-        out = reduce_str(out)
-        if len(out) < old_length:
-            old_length = len(out)
-        else:
-            further_reduce = False
-    return out
 
 
 def remove_letter(puzzle, letter):
@@ -44,7 +32,7 @@ def main(puzzle_input):
     with open(puzzle_input, 'r') as f:
         puzzle = f.read().replace('\n', '')
 
-    r_puzzle = fully_reduce_str(puzzle)
+    r_puzzle = reduce_str(puzzle)
     ans1 = len(r_puzzle)
     print("Part 1 solution is:")
     print(ans1)
@@ -54,7 +42,7 @@ def main(puzzle_input):
     for letter in string.ascii_lowercase:
         if letter in r_puzzle:
             removed = remove_letter(r_puzzle, letter)
-            new_ans = len(fully_reduce_str(removed))
+            new_ans = len(reduce_str(removed))
             if new_ans < ans2:
                 ans2 = new_ans
 
