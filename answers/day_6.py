@@ -96,7 +96,7 @@ def get_boundary_points(puzzle):
     return output
 
 
-def get_points_count(puzzle, inf_points=None):
+def get_max_area(puzzle, inf_points=None):
     if inf_points is not None:
         remove = set(inf_points)
     else:
@@ -129,6 +129,57 @@ def get_points_count(puzzle, inf_points=None):
     return max(point_dict.values())
 
 
+def check_distance(point, puzzle, cut=10000):
+    i = 0
+    total = 0
+    n = len(puzzle)
+    while i < n and total < cut:
+        total += manhatten(puzzle[i], point)
+        i += 1
+    if total < cut:
+        out = 1
+    else:
+        out = 0
+    return out
+
+
+def count_close_points(puzzle, cut=10000):
+
+    X = []
+    Y = []
+    for (x, y) in puzzle:
+        X.append(x)
+        Y.append(y)
+    x_min = min(X)
+    x_max = max(X)
+    y_min = min(Y)
+    y_max = max(Y)
+
+    # initialisation
+    l_dist = 0
+    h_dist = 0
+    for p in puzzle:
+        l_dist += manhatten((x_min, y_min), p)
+        h_dist += manhatten((x_max, y_max), p)
+
+    low = 0
+    while l_dist < cut:
+        low += 1
+        l_dist += 50
+
+    high = 0
+    while h_dist < cut:
+        high += 1
+        h_dist += 50
+
+    total = 0
+    for i in range(x_min - low, x_max + high):
+        for j in range(y_min - low, y_max + high):
+            point = (i, j)
+            total += check_distance(point, puzzle, cut=cut)
+    return total
+
+
 @click.command()
 @click.argument("puzzle_input", type=click.Path(exists=True))
 def main(puzzle_input):
@@ -150,12 +201,14 @@ def main(puzzle_input):
         puzzle.append((x, y))
 
     puzzle_boundary = get_boundary_points(puzzle)
-    ans1 = get_points_count(puzzle, inf_points=puzzle_boundary)
+    ans1 = get_max_area(puzzle, inf_points=puzzle_boundary)
 
     print("Part 1 solution is:")
     print(ans1)
     print("-------")
-    # part 2 answer is currently very slow
+
+    ans2 = count_close_points(puzzle)
+    print(ans2)
 
 
 if __name__ == "__main__":
