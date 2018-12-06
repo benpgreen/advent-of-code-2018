@@ -162,15 +162,16 @@ def count_close_points(puzzle, cut=10000):
         l_dist += manhatten((x_min, y_min), p)
         h_dist += manhatten((x_max, y_max), p)
 
+    p_len = len(puzzle)
     low = 0
     while l_dist < cut:
         low += 1
-        l_dist += 50
+        l_dist += p_len
 
     high = 0
     while h_dist < cut:
         high += 1
-        h_dist += 50
+        h_dist += p_len
 
     total = 0
     for i in range(x_min - low, x_max + high):
