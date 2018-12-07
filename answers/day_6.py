@@ -209,6 +209,7 @@ def main(puzzle_input):
     print("-------")
 
     ans2 = count_close_points(puzzle)
+    print("Part 2 solution is:")
     print(ans2)
 
 
