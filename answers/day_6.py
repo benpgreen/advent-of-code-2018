@@ -143,6 +143,25 @@ def check_distance(point, puzzle, cut=10000):
     return out
 
 
+def get_distance(point, puzzle):
+    i = 0
+    total = 0
+    n = len(puzzle)
+    while i < n:
+        total += manhatten(puzzle[i], point)
+        i += 1
+    return total
+
+
+def adjust_end(dist, cut, length):
+    out = 0
+    d = dist
+    while d < cut:
+        out += 1
+        d += length
+    return out
+
+
 def count_close_points(puzzle, cut=10000):
 
     X = []
@@ -156,26 +175,35 @@ def count_close_points(puzzle, cut=10000):
     y_max = max(Y)
 
     # initialisation
-    l_dist = 0
-    h_dist = 0
-    for p in puzzle:
-        l_dist += manhatten((x_min, y_min), p)
-        h_dist += manhatten((x_max, y_max), p)
+    xl_dist = get_distance((x_min, y_max), puzzle)
+    xh_dist = get_distance((x_max, y_max), puzzle)
+    for y in range(y_min, y_max):
+        l_new = get_distance((x_min, y), puzzle)
+        h_new = get_distance((x_max, y), puzzle)
+        if l_new < xl_dist:
+            xl_dist = l_new
+        if h_new < xh_dist:
+            xh_dist = h_new
+
+    yl_dist = get_distance((x_max, y_min), puzzle)
+    yh_dist = get_distance((x_max, y_max), puzzle)
+    for x in range(x_min, x_max):
+        l_new = get_distance((x, y_min), puzzle)
+        h_new = get_distance((x, y_max), puzzle)
+        if l_new < yl_dist:
+            yl_dist = l_new
+        if h_new < yh_dist:
+            yh_dist = h_new
 
     p_len = len(puzzle)
-    low = 0
-    while l_dist < cut:
-        low += 1
-        l_dist += p_len
-
-    high = 0
-    while h_dist < cut:
-        high += 1
-        h_dist += p_len
+    x_min -= adjust_end(xl_dist, cut, p_len)
+    y_min -= adjust_end(yl_dist, cut, p_len)
+    x_max += adjust_end(xh_dist, cut, p_len)
+    y_max += adjust_end(xh_dist, cut, p_len)
 
     total = 0
-    for i in range(x_min - low, x_max + high):
-        for j in range(y_min - low, y_max + high):
+    for i in range(x_min, x_max + 1):
+        for j in range(y_min, y_max + 1):
             point = (i, j)
             total += check_distance(point, puzzle, cut=cut)
     return total
