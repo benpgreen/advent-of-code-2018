@@ -25,14 +25,15 @@ def print_msg(vector):
         print(row)
 
 
-def find_possible_messages(positions, velocities, v_tol=10, h_tol=100):
+def find_possible_messages(positions, velocities, v_tol=10, h_tol=100,
+                           wait_tol=100000):
 
     pos = positions.copy()
     v_range, h_range = get_ranges(pos)
     seconds = 0
 
     # wait until positions close enough
-    while v_range > v_tol or h_range > h_tol:
+    while (v_range > v_tol or h_range > h_tol) and seconds <= wait_tol:
         pos += velocities
         v_range, h_range = get_ranges(pos)
         seconds += 1
@@ -58,7 +59,11 @@ def find_possible_messages(positions, velocities, v_tol=10, h_tol=100):
     '--h_tol', type=int, default=100,
     help='The horizontal range: msgs must be within this length to be printed'
     )
-def main(puzzle_input, v_tol, h_tol):
+@click.option(
+    '--wait_tol', type=int, default=100000,
+    help='The number of seconds to wait at the start before giving up'
+    )
+def main(puzzle_input, v_tol, h_tol, wait_tol):
     """Will print possible messages, you will then need to decide which is
     your answer in the case of mutliple messages.
 
@@ -88,7 +93,8 @@ def main(puzzle_input, v_tol, h_tol):
     positions = np.array(positions)
     velos = np.array(velos)
 
-    find_possible_messages(positions, velos, v_tol=v_tol, h_tol=h_tol)
+    find_possible_messages(positions, velos, v_tol=v_tol, h_tol=h_tol,
+                           wait_tol=wait_tol)
 
 
 if __name__ == '__main__':
