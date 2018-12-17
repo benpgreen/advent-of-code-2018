@@ -207,19 +207,6 @@ class GroundWater:
         else:
             self.highest_drop = self.y_range[1]+1
 
-    def viz(self):
-        Xs = [key[0] for key in self.ground.keys()]
-        x_min = min(Xs)
-        x_max = max(Xs)
-        for i in range(self.y_range[1]+1):
-            row = ''
-            for j in range(x_min, x_max+1):
-                if (j, i) in self.ground.keys():
-                    row += self.ground[(j, i)]
-                else:
-                    row += '.'
-            print(row)
-
     def ans1(self):
         score = 0
         for (i, j), val in self.ground.items():
@@ -259,17 +246,17 @@ class GroundWater:
                         score += 1
         return score
 
-    def short_viz(self, size=5):
+    def viz(self):
         Xs = []
         Ys = []
         for key, val in self.ground.items():
             if val != '.' and val != '#':
                 Xs.append(key[0])
                 Ys.append(key[1])
-        x_min = min(Xs) - size
-        x_max = max(Xs) + size
-        y_max = max(Ys) + size
-        for i in range(max(0, y_max-1000), y_max+1):
+        x_min = min(Xs) - 5
+        x_max = max(Xs) + 5
+        y_max = max(Ys) + 5
+        for i in range(max(0, y_max-40), y_max+1):
             row = ''
             for j in range(x_min, x_max):
                 if (j, i) in self.ground.keys():
@@ -278,18 +265,6 @@ class GroundWater:
                     row += '.'
             print(row)
         print('*'*(x_max-x_min))
-
-
-TEST = """
-x=495, y=2..7
-y=7, x=495..501
-x=501, y=3..7
-x=498, y=2..4
-x=506, y=1..2
-x=498, y=10..13
-x=504, y=10..13
-y=13, x=498..504
-""".split('\n')[1:-1]
 
 
 @click.command()
