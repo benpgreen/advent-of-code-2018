@@ -167,7 +167,7 @@ def check_part2_template(ip, programs):
             raise RuntimeError(error_msg)
         if C0 != permutations[C]:
             raise RuntimeError(error_msg)
-        if m[:2] != 'eq' or m[:2] != 'gt':
+        if m[:2] != 'eq' and m[:2] != 'gt':
             if m != 'seti' and A0 != permutations[A]:
                 raise RuntimeError(error_msg)
             if m[-1] == 'r' and m != 'setr' and B0 != permutations[B]:
